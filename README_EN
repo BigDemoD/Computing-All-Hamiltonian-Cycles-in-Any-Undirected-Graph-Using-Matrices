@@ -1,0 +1,59 @@
+# Full Permutation and Hamiltonian Circuit Algorithms
+
+## 1. Full Permutation Matrix Recursive Algorithm
+
+### 1.1 Algorithm Overview
+- &zwnj;**Initialization**&zwnj;: Start with a 1×1 matrix initialized to `1` (base case for single-digit permutations).  
+- &zwnj;**Matrix Construction**&zwnj; (for `n` elements):  
+  1. Slice the full permutation result matrix of `n` elements by iteratively removing the leftmost column and inserting it downward, forming a &zwnj;**quasi-upper triangular matrix**&zwnj;.  
+  2. Rotate this matrix 180° to create a &zwnj;**quasi-lower triangular matrix**&zwnj;.  
+  3. Merge these with a diagonal matrix of width `n!` to generate the result for `n+1` elements.  
+  ![Example](https://via.placeholder.com/400x200?text=Figure+1)  
+  *Figure 1: Matrix slicing and merging steps.*
+
+### 1.2 Key Properties
+1. &zwnj;**Rotation Invariance**&zwnj;: The matrix remains unchanged after 180° rotation.  
+2. &zwnj;**Backward Deduction**&zwnj;: Extract `(n-1)`-digit permutation matrices from the top-right/bottom-left corner of the `n`-digit matrix.  
+  ![Example](https://via.placeholder.com/400x200?text=Figure+4)  
+  *Figure 4: Backward deduction illustration.*
+
+- &zwnj;**Time Complexity**&zwnj;:  
+  - Forward computation: `O(n²)`  
+  - Backward deduction: `O(1)`  
+
+---
+
+## 2. Hamiltonian Circuit Algorithm
+
+### 2.1 Connection to Full Permutation
+- In a complete undirected graph with `n` vertices, all Hamiltonian circuits are derived from the &zwnj;**upper half**&zwnj; of the `(n-1)`-digit permutation matrix combined with vertex `n`.  
+- Total Hamiltonian circuits: `(n-1)! / 2`  
+  ![Example](https://via.placeholder.com/400x200?text=Figure+5)  
+  *Figure 5: Hamiltonian circuits for a 4-vertex graph.*
+
+### 2.2 Algorithm Steps
+1. &zwnj;**Identify Missing Paths**&zwnj;:  
+   - Compare the target graph `G = (N, V)` with a complete graph to define missing paths (`V₁`) and vertices (`N₁`).  
+
+2. &zwnj;**Transition Matrix Calculation**&zwnj;:  
+   - For a vertex `s ∈ N₁`:  
+     - Subtract `s` from the upper half of the `(n-1)! × n` permutation matrix and booleanize to get `T₁`.  
+     - Repeat column-wise to generate `T₂`.  
+     - Transition matrix: `T = T₁ · T₂`.  
+     ![Example](https://via.placeholder.com/400x200?text=Figure+6)  
+     *Figure 6: Transition matrix for vertex 1.*
+
+3. &zwnj;**Path Vector Derivation**&zwnj;:  
+   - For a missing path `f(s, d)`:  
+     - Multiply transition matrices of `s` and `d`, reverse, and reduce columns to get vector `A`.  
+     - Compute `C = A - B` (where `B` is a vector of 4s), then booleanize `Cᵀ` to obtain row vector `D`.  
+     - Use `D` to identify Hamiltonian circuits missing path `f`.  
+     ![Example](https://via.placeholder.com/400x200?text=Figure+8)  
+     *Figure 8: Path vector for missing edge 1_3.*
+
+4. &zwnj;**Multiple Missing Paths**&zwnj;:  
+   - Combine row vectors of all paths in `V₁` and reduce via row-wise binary multiplication.  
+   ![Example](https://via.placeholder.com/400x200?text=Figure+10)  
+   *Figure 10: Result for multiple missing paths.*
+
+
